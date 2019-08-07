@@ -77,20 +77,85 @@
 
 // fs.writeFileSync('writeMe.text',readMe);
 
+
+
 //创建和删除目录
-var fs = require('fs');
+// var fs = require('fs');
 
 // fs.unlink('writeMe.text',function(){
 
 // });
 
-fs.mkdir('stuff',() => {
-    fs.readFile('readMe.text','utf8',(err, data) => {
-        fs.writeFile('./stuff/writeMe.text',data, () => {
-            console.log('code 0');
-        })
-    })
-})
+// fs.mkdir('stuff',() => {
+//     fs.readFile('readMe.text','utf8',(err, data) => {
+//         fs.writeFile('./stuff/writeMe.text',data, () => {
+//             console.log('code 0');
+//         })
+//     })
+// })
+
+
+
+//流和管道
+// var fs = require('fs');
+
+// var myReadStream = fs.createReadStream(__dirname+'/readMe.text', 'utf8');
+// var myWriteStream = fs.createWriteStream(__dirname+'/writeMe.text');
+
+// var data = '';
+
+// myReadStream.on('data', function(chunk){
+//     data += chunk;
+//     myWriteStream.write(chunk);
+// })
+// myReadStream.on('end', function(){
+//     console.log(data);
+// })
+// var writeData = "hello world";
+// myWriteStream.write(writeData);
+// myWriteStream.end();
+// myWriteStream.on('finish', function() {
+//     console.log('finished');
+// })
+
+// myReadStream.pipe(myWriteStream);
+
+// var crypto = require('crypto');
+// var fs = require('fs');
+// var zlib = require('zlib');
+
+// var password = new Buffer(process.env.PASS || 'password');
+// var encryptStream = crypto.createCipher('aes-256-cbc', password);
+
+// var gzip = zlib.createGzip();
+// var readStream = fs.createReadStream(__dirname + "/readMe.txt"); // current file
+// var writeStream = fs.createWriteStream(__dirname + '/out.gz');
+
+// readStream // reads current file
+//     .pipe(encryptStream) // encrypts
+//     .pipe(gzip) // compresses
+//     .pipe(writeStream) // writes to out file
+//     .on('finish', function() { // all done
+//         console.log('done');
+//     });
+
+var crypto = require('crypto');
+var fs = require('fs');
+var zlib = require('zlib');
+
+var password = new Buffer(process.env.PASS || 'password');
+var decryptStream = crypto.createDecipher('aes-256-cbc', password);
+
+var gzip = zlib.createGunzip();
+var readStream = fs.createReadStream(__dirname + '/out.gz');
+
+readStream // reads current file
+    .pipe(gzip) // uncompresses
+    .pipe(decryptStream) // decrypts
+    .pipe(process.stdout) // writes to terminal
+    .on('finish', function() { // finished
+        console.log('done');
+    });
 
 
 
